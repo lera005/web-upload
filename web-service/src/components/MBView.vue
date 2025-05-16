@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="content">
+      <!-- Upload-Formular -->
       <div class="content" v-if="!uploadSuccess">
         <p>Bitte wähle die Fotos aus, welche du hochladen möchtest.</p>
 
@@ -14,8 +15,16 @@
             hidden
           />
         </label>
+
+        <!-- Fortschrittsbalken -->
+        <div v-if="isUploading" class="progress-wrapper">
+          <div class="progress-bar" :style="{ width: uploadProgress + '%' }">
+            <span class="progress-text">{{ uploadProgress }}%</span>
+          </div>
+        </div>
       </div>
 
+      <!-- Erfolgsnachricht -->
       <div v-else class="success-message">
         <span class="check-icon">✓</span>
         <p>Du kannst nun auf dem Computer fortfahren.</p>
@@ -31,6 +40,8 @@ export default {
   data() {
     return {
       uploadSuccess: false,
+      uploadProgress: 0,
+      isUploading: false,
     };
   },
   methods: {
@@ -41,7 +52,9 @@ export default {
       const formData = new FormData();
       Array.from(files).forEach((file) => formData.append("images", file));
 
-      this.uploadSuccess = true;
+      this.uploadSuccess = false;
+      this.uploadProgress = 0;
+      this.isUploading = true;
 
       try {
         await axios.post(
@@ -49,12 +62,21 @@ export default {
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
+            onUploadProgress: (progressEvent) => {
+              const percent = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              this.uploadProgress = percent;
+            },
           }
         );
 
         this.uploadSuccess = true;
       } catch (error) {
         console.error("Fehler beim Hochladen:", error);
+        this.uploadSuccess = false;
+      } finally {
+        this.isUploading = false;
       }
     },
   },
@@ -114,6 +136,32 @@ p {
   font-size: 60px;
   color: #333;
   margin-bottom: 10px;
+}
+.progress-wrapper {
+  width: 80%;
+  background: #e0e0e0;
+  border-radius: 8px;
+  margin-top: 20px;
+  overflow: hidden;
+  position: relative;
+  height: 28px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #4cd3aa;
+  transition: width 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+.progress-text {
+  z-index: 2;
 }
 
 @media screen and (max-width: 768px) {

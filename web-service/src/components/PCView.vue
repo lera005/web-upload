@@ -1,19 +1,26 @@
 <template>
   <div class="container">
-    <div v-if="images.length" class="image-gallery">
+    <div v-if="images.length">
       <div class="container-img">
         <button @click="toggleSelectAll" class="select-btn">
           {{ allSelected ? "Alle abwählen" : "Alle auswählen" }}
         </button>
-        <div
-          v-for="(image, index) in images"
-          :key="index"
-          class="image-container"
-          :class="{ selected: selectedImages.includes(image.id) }"
-          @click="toggleSelection(image.id)"
-        >
-          <img :src="image.url" alt="Uploaded Image" class="image-thumbnail" />
+        <div class="image-gallery">
+          <div
+            v-for="(image, index) in images"
+            :key="index"
+            class="image-container"
+            :class="{ selected: selectedImages.includes(image.id) }"
+            @click="toggleSelection(image.id)"
+          >
+            <img
+              :src="image.url"
+              alt="Uploaded Image"
+              class="image-thumbnail"
+            />
+          </div>
         </div>
+
         <button
           v-if="selectedImages.length"
           @click="downloadSelectedImages"
@@ -28,11 +35,12 @@
         </button>
       </div>
     </div>
-  </div>
-  <div v-if="images.length <= 0" class="message-note">
-    <p>
-      Bitte rufe die Seite auf deinem Telefon auf und folge den Anweisungen.
-    </p>
+
+    <div v-else class="message-note">
+      <p>
+        Bitte rufe die Seite auf deinem Telefon auf und folge den Anweisungen.
+      </p>
+    </div>
   </div>
 </template>
 
@@ -197,8 +205,9 @@ button img {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 20px;
-  margin: 20px 0;
+  margin: 20px auto;
   justify-items: center;
+  width: 100%;
 }
 
 /* Image Container */

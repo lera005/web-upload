@@ -1,34 +1,39 @@
 <template>
   <div class="container">
-    <button @click="toggleSelectAll" class="select-btn">
-        {{ allSelected ? 'Alle abwählen' : 'Alle auswählen' }}
-      </button>
-
     <div v-if="images.length" class="image-gallery">
-      <div 
-        v-for="(image, index) in images" 
-        :key="index" 
-        class="image-container"
-        :class="{ selected: selectedImages.includes(image.id) }"
-        @click="toggleSelection(image.id)"
-      >
-        <img :src="image.url" alt="Uploaded Image" class="image-thumbnail" />
+      <div class="container-img">
+        <button @click="toggleSelectAll" class="select-btn">
+          {{ allSelected ? "Alle abwählen" : "Alle auswählen" }}
+        </button>
+        <div
+          v-for="(image, index) in images"
+          :key="index"
+          class="image-container"
+          :class="{ selected: selectedImages.includes(image.id) }"
+          @click="toggleSelection(image.id)"
+        >
+          <img :src="image.url" alt="Uploaded Image" class="image-thumbnail" />
+        </div>
       </div>
     </div>
 
-    
-
-    <button v-if="selectedImages.length" @click="downloadSelectedImages" class="download-btn">
-    Ausgewählte herunterladen
+    <button
+      v-if="selectedImages.length"
+      @click="downloadSelectedImages"
+      class="download-btn"
+    >
+      Ausgewählte herunterladen
     </button>
   </div>
   <div v-if="images.length <= 0" class="message-note">
-      <p>Bitte rufe die Seite auf deinem Telefon auf und folge den Anweisungen.</p>
-    </div>
+    <p>
+      Bitte rufe die Seite auf deinem Telefon auf und folge den Anweisungen.
+    </p>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
@@ -39,21 +44,26 @@ export default {
   },
   computed: {
     allSelected() {
-      return this.selectedImages.length === this.images.length && this.images.length > 0;
-    }
+      return (
+        this.selectedImages.length === this.images.length &&
+        this.images.length > 0
+      );
+    },
   },
   async mounted() {
     try {
-      const response = await axios.get('http://localhost:5000/images/');
+      const response = await axios.get("http://localhost:5000/images/");
       this.images = response.data;
     } catch (error) {
-      console.error('Error loading images:', error);
+      console.error("Error loading images: ", error);
     }
   },
   methods: {
     toggleSelection(id) {
       if (this.selectedImages.includes(id)) {
-        this.selectedImages = this.selectedImages.filter(imgId => imgId !== id);
+        this.selectedImages = this.selectedImages.filter(
+          (imgId) => imgId !== id
+        );
       } else {
         this.selectedImages.push(id);
       }
@@ -62,39 +72,42 @@ export default {
       if (this.allSelected) {
         this.selectedImages = [];
       } else {
-        this.selectedImages = this.images.map(img => img.id);
+        this.selectedImages = this.images.map((img) => img.id);
       }
     },
     async downloadSelectedImages() {
       if (!this.selectedImages.length) return;
 
       try {
-        const response = await axios.get(`http://localhost:5000/download-multiple?ids=${this.selectedImages.join(',')}`, {
-          responseType: 'blob',
-        });
+        const response = await axios.get(
+          `http://localhost:5000/download-multiple?ids=${this.selectedImages.join(
+            ","
+          )}`,
+          {
+            responseType: "blob",
+          }
+        );
 
         const url = window.URL.createObjectURL(response.data);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.download = 'selected-images.zip';
+        link.download = "selected-images.zip";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       } catch (error) {
-        console.error('Error downloading selected images:', error);
+        console.error("Error downloading selected images:", error);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-/* 🌟 Global Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
 }
 
 body {
@@ -106,8 +119,7 @@ body {
   min-height: 100vh;
 }
 
-/*Container */
-.container {
+.container-img {
   max-width: 1000px;
   width: 95%;
   margin: auto;
@@ -120,12 +132,16 @@ body {
 }
 
 .message-note {
-  width: 100%;
-  margin: 0 auto;
-  height: 50px;
-  background-color: #333;
+  display: flex;
   align-items: center;
   justify-content: center;
+  background-color: transparent;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  margin: auto;
 }
 
 /*Header */

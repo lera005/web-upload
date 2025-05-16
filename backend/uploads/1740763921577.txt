@@ -1,2 +1,0 @@
-/usr/share/applications/org.gnome.gedit.desktop
-lol

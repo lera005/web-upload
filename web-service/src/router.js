@@ -1,21 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import MobileHome from './components/MBView.vue';
-import DesktopHome from './components/PCView.vue';
-import MainView from './views/MainView.vue'
-
-function detectDevice() {
-  return /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
-}
+import { createRouter, createWebHistory } from "vue-router";
+import MainView from "./views/MainView.vue";
 
 const routes = [
   {
-    path: '/',
-    component: detectDevice() === 'mobile' ? MobileHome : DesktopHome
+    path: "/",
+    component: MainView,
   },
   {
-    path: '/main',
-    component: MainView
-  }
+    path: "/main",
+    component: MainView,
+  },
 ];
 
 const router = createRouter({

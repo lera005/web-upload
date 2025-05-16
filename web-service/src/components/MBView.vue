@@ -39,7 +39,7 @@
         this.uploadSuccess = true;
 
         try {
-          await axios.post('http://10.1.251.247:5000/upload', formData, {
+          await axios.post('http://localhost:5000/upload', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
   

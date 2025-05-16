@@ -1,11 +1,8 @@
 <template>
   <div class="container">
-    <header class="header">
-      <h1>📸 Fototransfer</h1>
-      <button @click="toggleSelectAll" class="select-btn">
+    <button @click="toggleSelectAll" class="select-btn">
         {{ allSelected ? 'Alle abwählen' : 'Alle auswählen' }}
       </button>
-    </header>
 
     <div v-if="images.length" class="image-gallery">
       <div 
@@ -25,7 +22,7 @@
     Ausgewählte herunterladen
     </button>
   </div>
-  <div v-if="images.length <= 0">
+  <div v-if="images.length <= 0" class="message-note">
       <p>Bitte rufe die Seite auf deinem Telefon auf und folge den Anweisungen.</p>
     </div>
 </template>
@@ -47,7 +44,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get('http://10.1.251.247:5000/images');
+      const response = await axios.get('http://localhost:5000/images/');
       this.images = response.data;
     } catch (error) {
       console.error('Error loading images:', error);
@@ -72,7 +69,7 @@ export default {
       if (!this.selectedImages.length) return;
 
       try {
-        const response = await axios.get(`http://10.1.251.247:5000/download-multiple?ids=${this.selectedImages.join(',')}`, {
+        const response = await axios.get(`http://localhost:5000/download-multiple?ids=${this.selectedImages.join(',')}`, {
           responseType: 'blob',
         });
 
@@ -107,10 +104,9 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 20px;
 }
 
-/* 🌟 Container */
+/*Container */
 .container {
   max-width: 1000px;
   width: 95%;
@@ -120,11 +116,19 @@ body {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin-top: 3%;
   margin-bottom: 3%;
 }
 
-/* 🌟 Header */
+.message-note {
+  width: 100%;
+  margin: 0 auto;
+  height: 50px;
+  background-color: #333;
+  align-items: center;
+  justify-content: center;
+}
+
+/*Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -138,7 +142,7 @@ body {
   color: #222;
 }
 
-/* 🌟 Select Button */
+/* Select Button */
 .select-btn {
   background: #333;
   color: white;
@@ -154,7 +158,7 @@ body {
   background: #444;
 }
 
-/* 🌟 Image Gallery */
+/*Image Gallery */
 .image-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -163,7 +167,7 @@ body {
   justify-items: center;
 }
 
-/* 🌟 Image Container */
+/* Image Container */
 .image-container {
   width: 220px;
   height: 220px;
@@ -189,7 +193,7 @@ body {
   box-shadow: 0px 6px 15px rgba(200, 200, 200, 0.4);
 }
 
-/* 🌟 Image */
+/* Image */
 .image-thumbnail {
   width: 100%;
   height: 100%;
@@ -202,7 +206,7 @@ body {
   filter: brightness(1);
 }
 
-/* 🌟 Download Button */
+/*Download Button */
 .download-btn {
   background: #333;
   color: white;

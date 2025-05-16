@@ -6,13 +6,18 @@
         <h1>Fototransfer</h1>
       </div>
       <div class="h-side-r">
-        <p>Hilfe</p>
-        <p>Kontakt</p>
-        <p id="download-all">Alle herunterladen</p>
+        <p @click="showHomeView" style="cursor: pointer">Start</p>
+        <p @click="showHelpView" style="cursor: pointer">Hilfe</p>
+        <p @click="showContactView" style="cursor: pointer">Kontakt</p>
+        <button id="download-all" @click="toggleSelectAll">
+          Alle herunterladen
+        </button>
       </div>
     </div>
-    <div>
-      <PCView v-if="deviceType === 'desktop'" />
+    <HilfeView v-if="showHelp" />
+    <KontaktView v-if="showContact" />
+    <div v-if="!showHelp && !showContact">
+      <PCView v-if="deviceType === 'desktop'" ref="pcViewRef" />
       <MBView v-else />
     </div>
   </div>
@@ -21,25 +26,50 @@
 <script>
 import PCView from "../components/PCView.vue";
 import MBView from "../components/MBView.vue";
+import HilfeView from "./HilfeView.vue";
+import KontaktView from "./KontaktView.vue";
 
 export default {
   components: {
     PCView,
     MBView,
+    HilfeView,
+    KontaktView,
   },
   data() {
     return {
       deviceType: "desktop",
+      images: [],
+      selectedImages: [],
+      showHelp: false,
+      showContact: false,
     };
   },
   mounted() {
     this.deviceType = this.detectDevice();
   },
   methods: {
+    toggleSelectAll() {
+      if (this.deviceType === "desktop") {
+        this.$refs.pcViewRef.toggleSelectAllDownload?.();
+      }
+    },
     detectDevice() {
       return /Mobi|Android|iPhone/i.test(navigator.userAgent)
         ? "mobile"
         : "desktop";
+    },
+    showHelpView() {
+      this.showHelp = true;
+      this.showContact = false;
+    },
+    showContactView() {
+      this.showContact = true;
+      this.showHelp = false;
+    },
+    showHomeView() {
+      this.showContact = false;
+      this.showHelp = false;
     },
   },
 };
@@ -47,9 +77,14 @@ export default {
 <style scoped>
 .main {
   width: 100%;
-  height: 100vh;
+  height: 120vh;
   background-color: transparent;
   margin-top: 0;
+}
+
+.image-container.selected {
+  border: 5px solid #12b304;
+  box-shadow: 0px 6px 15px rgba(200, 200, 200, 0.4);
 }
 
 .header {
@@ -92,13 +127,15 @@ export default {
 }
 
 #download-all {
-  padding: 10px;
-  border-radius: 12px;
-  background-color: #333;
-  margin-left: 20px;
-  color: #fff;
-  font-weight: 500;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
+  transition: 0.3s;
+  margin-left: 20px;
 }
 @media screen and (max-width: 768px) {
   .header {

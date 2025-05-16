@@ -44,9 +44,13 @@ export default {
       this.uploadSuccess = true;
 
       try {
-        await axios.post("http://localhost:5000/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axios.post(
+          "https://fototransfer.mannq.com/api/upload",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
 
         this.uploadSuccess = true;
       } catch (error) {

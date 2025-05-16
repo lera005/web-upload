@@ -14,16 +14,20 @@
         >
           <img :src="image.url" alt="Uploaded Image" class="image-thumbnail" />
         </div>
+        <button
+          v-if="selectedImages.length"
+          @click="downloadSelectedImages"
+          class="download-btn"
+        >
+          <img
+            src="../../public/download (1).png"
+            alt="Icon"
+            class="btn-icon"
+          />
+          Ausgewählte herunterladen
+        </button>
       </div>
     </div>
-
-    <button
-      v-if="selectedImages.length"
-      @click="downloadSelectedImages"
-      class="download-btn"
-    >
-      Ausgewählte herunterladen
-    </button>
   </div>
   <div v-if="images.length <= 0" class="message-note">
     <p>
@@ -52,7 +56,9 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get("http://localhost:5000/images/");
+      const response = await axios.get(
+        "https://fototransfer.mannq.com/api/images/"
+      );
       this.images = response.data;
     } catch (error) {
       console.error("Error loading images: ", error);
@@ -75,12 +81,20 @@ export default {
         this.selectedImages = this.images.map((img) => img.id);
       }
     },
+    toggleSelectAllDownload() {
+      if (this.allSelected) {
+        this.selectedImages = [];
+      } else {
+        this.selectedImages = this.images.map((img) => img.id);
+        this.downloadSelectedImages();
+      }
+    },
     async downloadSelectedImages() {
       if (!this.selectedImages.length) return;
 
       try {
         const response = await axios.get(
-          `http://localhost:5000/download-multiple?ids=${this.selectedImages.join(
+          `https://fototransfer.mannq.com/api/download-multiple?ids=${this.selectedImages.join(
             ","
           )}`,
           {
@@ -117,6 +131,10 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+}
+
+button img {
+  width: 30px;
 }
 
 .container-img {
@@ -205,7 +223,7 @@ body {
 }
 
 .image-container.selected {
-  border: 5px solid #12b304;
+  border: 5px solid #4cd3aa;
   box-shadow: 0px 6px 15px rgba(200, 200, 200, 0.4);
 }
 
@@ -224,19 +242,23 @@ body {
 
 /*Download Button */
 .download-btn {
-  background: #333;
-  color: white;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  color: black;
   border: none;
   padding: 16px 24px;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  transition: 0.3s;
+  border: none;
   margin-top: 30px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .download-btn:hover {
-  background: #444;
+  border: #4cd3aa 2px dashed;
 }
 </style>
